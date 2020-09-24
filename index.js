@@ -7,7 +7,7 @@ var port = process.env.PORT || 4000;
 app.use(cors());
 
 app.listen(port, () => {
-	console.log(`Server Works !!! At port ${port}`);
+	console.log(`Server running port ${port}`);
 });
 
 app.get('/downloadmp3', async (req, res, next) => {
@@ -35,4 +35,4 @@ app.get('/downloadmp3', async (req, res, next) => {
 		console.error(err);
 	}
 });
-//http://localhost:4000/downloadmp3?url=https://www.youtube.com/watch?v=pMmCvixJS8c
+//Sample URL: http://localhost:4000/downloadmp3?url=https://www.youtube.com/watch?v=pMmCvixJS8c
