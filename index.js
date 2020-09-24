@@ -6,8 +6,8 @@ var port = process.env.PORT || 4000;
 
 app.use(cors());
 
-app.listen(PORT, () => {
-	console.log(`Server Works !!! At port ${PORT}`);
+app.listen(port, () => {
+	console.log(`Server Works !!! At port ${port}`);
 });
 
 app.get('/downloadmp3', async (req, res, next) => {
