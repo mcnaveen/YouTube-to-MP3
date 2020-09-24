@@ -36,6 +36,9 @@ http://localhost:4000/downloadmp3?url=YOUTUBE_URL
 
 🥳 It will start downloading the MP3 file of specified URL
 
+## 🕹️ Running on Heroku
+- Running on Heroku require both .env file and Procfile
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
