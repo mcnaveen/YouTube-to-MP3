@@ -1,0 +1,306 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        230,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        480,
+        320
+      ],
+      "webhookId": "4a8c475b-5efb-41e0-8a64-f3f29af50093",
+      "credentials": {
+        "telegramApi": "YouTubeToMP3 Telegam Bot"
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{!!$json[\"message\"][\"photo\"]}}",
+              "value2": true
+            },
+            {
+              "value1": "={{!!$json[\"message\"][\"sticker\"][\"emoji\"]}}",
+              "value2": true
+            },
+            {
+              "value1": "={{!!$json[\"message\"][\"voice\"][\"mime_type\"]}}",
+              "value2": true
+            },
+            {
+              "value1": "={{!!$json[\"message\"][\"animation\"][\"mime_type\"]}}",
+              "value2": true
+            },
+            {
+              "value1": "={{!!$json[\"message\"][\"video\"][\"mime_type\"]}}",
+              "value2": true
+            },
+            {
+              "value1": "={{!!$json[\"message\"][\"document\"][\"mime_type\"]}}",
+              "value2": true
+            },
+            {
+              "value1": "={{!!$json[\"message\"][\"audio\"][\"mime_type\"]}}",
+              "value2": true
+            }
+          ],
+          "string": []
+        },
+        "combineOperation": "any"
+      },
+      "name": "Media validation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        740,
+        610
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "🙏 Welcome to YouTube to MP3 Downloader\n\nHere are the steps:\n\n1️⃣ Open YouTube App and Select the Video\n\n2️⃣ Click on the Share Button and Choose Telegram\n\n3️⃣ Select YouTube to MP3 Downloader and Click Send",
+        "additionalFields": {}
+      },
+      "name": "Send Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        260,
+        100
+      ],
+      "credentials": {
+        "telegramApi": "YouTubeToMP3 Telegam Bot"
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "❌ Please send valid YouTube URL\n\nHere are the steps:\n\n1️⃣ Open YouTube App and Select the Video\n\n2️⃣ Click on the Share Button and Choose Telegram\n\n3️⃣ Select YouTube to MP3 Downloader and Click Send",
+        "additionalFields": {}
+      },
+      "name": "Send Warning",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        590
+      ],
+      "credentials": {
+        "telegramApi": "YouTubeToMP3 Telegam Bot"
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node[\"Send Warning Trigger\"].json[\"message\"][\"text\"]}}",
+              "value2": "/start"
+            }
+          ],
+          "boolean": []
+        }
+      },
+      "name": "Check /start command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        660,
+        310
+      ]
+    },
+    {
+      "parameters": {
+        "webhookUri": "https://discordapp.com/api/webhooks/758696203051073546/g9DwgXuR-bQmhP6-1P_Ivr_gl3hEMGiyyFd1YQ3cW9CEN4ALs1dTVOYnOQIbczwdm_k-",
+        "text": "=Requested by: @{{$node[\"Telegram Trigger\"].json[\"message\"][\"from\"][\"username\"]}}\nFull Name: {{$node[\"Telegram Trigger\"].json[\"message\"][\"from\"][\"first_name\"]}} {{$node[\"Telegram Trigger\"].json[\"message\"][\"from\"][\"last_name\"]}}\nID: {{$node[\"Telegram Trigger\"].json[\"message\"][\"from\"][\"id\"]}}\nYouTube Video URL: <{{$node[\"Set YouTube URL\"].json[\"YouTube URL\"]}}>\t\n\n----------------------------------------"
+      },
+      "name": "Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        270
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "=✅ YouTube URL Found\n\n⚡ Ready to Download\n\n👇 Click this to start download\n\nhttp://youtubetomp3api.herokuapp.com/downloadmp3?url={{$node[\"Set YouTube URL\"].json[\"YouTube URL\"]}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": []
+        },
+        "additionalFields": {}
+      },
+      "name": "Send Download Link",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        280
+      ],
+      "credentials": {
+        "telegramApi": "YouTubeToMP3 Telegam Bot"
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"text\"]}}",
+              "operation": "regex",
+              "value2": "((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|v\\/)?)([\\w\\-]{10}).\\b"
+            }
+          ]
+        }
+      },
+      "name": "Check for YouTube URL",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        900,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "YouTube URL",
+              "value": "={{$node[\"Check for YouTube URL\"].json[\"message\"][\"text\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set YouTube URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Under Maintenance",
+        "additionalFields": {}
+      },
+      "name": "Under Maintenance",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        390,
+        110
+      ],
+      "credentials": {
+        "telegramApi": "YouTubeToMP3 Telegam Bot"
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check /start command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Media validation": {
+      "main": [
+        [
+          {
+            "node": "Send Warning",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check for YouTube URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check /start command": {
+      "main": [
+        null,
+        [
+          {
+            "node": "Media validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Download Link": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for YouTube URL": {
+      "main": [
+        [
+          {
+            "node": "Set YouTube URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Warning",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set YouTube URL": {
+      "main": [
+        [
+          {
+            "node": "Send Download Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
